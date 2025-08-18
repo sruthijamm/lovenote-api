@@ -1,13 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 import random
+import os
 
 app = FastAPI()
 
-# Allow any site to call your API (so your friend can open it in Chrome)
+# Allow any site to call your API (useful if you ever host the page elsewhere)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # you can restrict this later
+    allow_origins=["*"],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -25,10 +27,13 @@ quotes = [
     "You must be a magician, because whenever you’re around, everyone else disappears",
 ]
 
-@app.get("/")
-def root():
-    return {"ok": True, "try": "/random-quote", "docs": "/docs"}
-
 @app.get("/random-quote")
 def get_random_quote():
     return {"quote": random.choice(quotes)}
+
+# Serve index.html at the root
+@app.get("/")
+def serve_index():
+    here = os.path.dirname(os.path.abspath(__file__))
+    index_path = os.path.join(here, "static", "index.html")
+    return FileResponse(index_path)
