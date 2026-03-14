@@ -4,208 +4,238 @@
   <meta charset="utf-8" />
   <title>LoveNote 💌</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="color-scheme" content="light dark" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:      #fff0f5;
-      --surface: #ffffffcc;
-      --border:  #ffffff55;
-      --ink:     #6b1040;
-      --muted:   #a5426b;
-      --accent:  #ff5c9d;
-      --accent2: #ffd1dc;
-      --shadow:  0 20px 60px rgba(180,40,100,.15);
-      --r: 24px;
+      --bg:       #fef0f4;
+      --bg2:      #fde2eb;
+      --surface:  #fffbfc;
+      --border:   #f5c6d8;
+      --ink:      #7c2147;
+      --muted:    #c0698a;
+      --soft:     #e8a0b8;
+      --accent:   #e8457a;
+      --accent2:  #ff7aaa;
+      --blush:    #fde8ef;
+      --shadow:   0 8px 40px rgba(220,80,130,.13);
+      --r:        20px;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #1a0812;
-        --surface: #2e0d20cc;
-        --border: #ffffff18;
-        --ink: #ffd1dc;
-        --muted: #e8a0b8;
-        --shadow: 0 20px 60px rgba(0,0,0,.5);
-      }
-    }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       min-height: 100svh;
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: 32px 20px;
       background:
-        radial-gradient(ellipse 900px 600px at 10% 0%, #ffd1dc88, transparent 60%),
-        radial-gradient(ellipse 700px 500px at 90% 100%, #ffb3cc66, transparent 60%),
+        radial-gradient(ellipse 700px 500px at 15% 10%, #fcd9e7bb, transparent 55%),
+        radial-gradient(ellipse 600px 400px at 85% 85%, #fde8f0aa, transparent 55%),
+        radial-gradient(ellipse 400px 300px at 60% 40%, #fff0f5, transparent 60%),
         var(--bg);
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Jost', sans-serif;
       color: var(--ink);
     }
 
-    .wrap { width: min(680px, 100%); display: flex; flex-direction: column; gap: 12px; }
+    /* subtle grain overlay */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+      background-size: 180px;
+      opacity: .4;
+    }
 
-    /* Header */
+    .wrap {
+      position: relative; z-index: 1;
+      width: min(640px, 100%);
+      display: flex; flex-direction: column; gap: 14px;
+    }
+
+    /* ── Header ── */
     .header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 4px;
+      padding: 0 2px;
     }
     .logo {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px; font-style: italic;
-      color: var(--accent); letter-spacing: -.3px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px; font-style: italic; font-weight: 600;
+      color: var(--accent);
+      letter-spacing: -.5px;
     }
-    .fav-count {
-      font-size: 13px; color: var(--muted);
+    .logo span { font-size: 20px; }
+    .fav-pill {
+      font-size: 12px; font-weight: 500; letter-spacing: .3px;
+      color: var(--muted);
       background: var(--surface); border: 1px solid var(--border);
-      padding: 5px 12px; border-radius: 999px; cursor: pointer;
-      transition: background .2s;
+      padding: 6px 14px; border-radius: 999px; cursor: pointer;
+      transition: all .2s;
     }
-    .fav-count:hover { background: var(--accent2); color: var(--ink); }
+    .fav-pill:hover { background: var(--blush); border-color: var(--soft); }
 
-    /* Mood pills */
-    .moods {
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
+    /* ── Mood row ── */
+    .moods { display: flex; gap: 8px; flex-wrap: wrap; }
     .mood-btn {
-      padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border);
-      background: var(--surface); color: var(--muted);
-      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
-      cursor: pointer; transition: all .2s; backdrop-filter: blur(6px);
+      padding: 7px 18px; border-radius: 999px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 400;
+      cursor: pointer; transition: all .18s;
     }
-    .mood-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .mood-btn:hover { border-color: var(--accent2); color: var(--accent); }
     .mood-btn.active {
-      background: var(--accent); color: white; border-color: var(--accent);
-      box-shadow: 0 4px 16px rgba(255,92,157,.4);
+      background: var(--accent);
+      color: white; border-color: var(--accent);
+      box-shadow: 0 4px 18px rgba(232,69,122,.3);
+      font-weight: 500;
     }
 
-    /* Main card */
+    /* ── Card ── */
     .card {
       background: var(--surface);
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       border-radius: var(--r);
       box-shadow: var(--shadow);
-      backdrop-filter: blur(12px);
-      padding: 40px 36px 32px;
+      padding: 40px 38px 32px;
       position: relative; overflow: hidden;
-      min-height: 200px;
-      display: flex; flex-direction: column; gap: 28px;
+    }
+
+    /* decorative petal shapes */
+    .card::before, .card::after {
+      content: ''; position: absolute; border-radius: 50%; pointer-events: none;
     }
     .card::before {
-      content: '💌';
-      position: absolute; top: -20px; right: -10px;
-      font-size: 120px; opacity: .06; pointer-events: none;
-      transform: rotate(-15deg);
+      width: 260px; height: 260px;
+      background: radial-gradient(circle, #fce8f0, transparent 70%);
+      top: -80px; right: -60px; opacity: .7;
+    }
+    .card::after {
+      width: 180px; height: 180px;
+      background: radial-gradient(circle, #fde0ec, transparent 70%);
+      bottom: -60px; left: -40px; opacity: .5;
     }
 
-    /* Quote */
-    .quote-wrap { position: relative; z-index: 1; }
+    .card-inner { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 28px; }
+
     .quote-label {
-      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 14px; font-weight: 500;
+      font-size: 10px; letter-spacing: 2.5px; text-transform: uppercase;
+      color: var(--soft); font-weight: 500;
     }
-    #quote {
-      font-family: 'Playfair Display', serif;
-      font-size: clamp(22px, 3.5vw, 34px);
-      line-height: 1.3; font-weight: 500; font-style: italic;
-      min-height: 80px;
-      transition: opacity .3s ease;
-    }
-    #quote.loading { opacity: .4; }
 
-    /* Actions */
-    .actions {
-      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
-      position: relative; z-index: 1;
+    #quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 4vw, 38px);
+      line-height: 1.25; font-weight: 600; font-style: italic;
+      color: var(--ink);
+      min-height: 90px;
     }
+    #quote.fading { opacity: .3; transition: opacity .25s; }
+    #quote.visible { opacity: 1; transition: opacity .4s; }
+
+    /* ── Actions ── */
+    .actions { display: flex; flex-wrap: wrap; gap: 9px; align-items: center; }
+
     .btn {
-      padding: 11px 20px; border-radius: 999px; border: none;
-      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
-      cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px;
+      padding: 10px 20px; border-radius: 999px; border: none;
+      font-family: 'Jost', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all .15s;
+      display: inline-flex; align-items: center; gap: 6px;
     }
     .btn-primary {
-      background: linear-gradient(135deg, #ff5c9d, #ff3385);
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
       color: white;
-      box-shadow: 0 6px 24px rgba(255,92,157,.45);
+      box-shadow: 0 5px 20px rgba(232,69,122,.35);
     }
-    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(255,92,157,.5); }
-    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(232,69,122,.45); }
+    .btn-primary:active { transform: none; }
     .btn-ghost {
-      background: var(--surface); border: 1px solid var(--border);
-      color: var(--muted); backdrop-filter: blur(6px);
+      background: var(--blush); border: 1.5px solid var(--border);
+      color: var(--muted);
     }
-    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: #ff5c9d11; }
+    .btn-ghost:hover { border-color: var(--soft); color: var(--accent); background: #fce0eb; }
+
     .btn-fav {
       margin-left: auto;
-      background: transparent; border: 1px solid var(--border);
-      color: var(--muted); font-size: 18px; padding: 8px 14px;
+      background: var(--blush); border: 1.5px solid var(--border);
+      color: var(--soft); font-size: 17px; padding: 9px 16px;
     }
-    .btn-fav:hover { border-color: #ff5c9d; background: #ff5c9d11; }
-    .btn-fav.saved { color: #ff5c9d; border-color: #ff5c9d; }
+    .btn-fav:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-fav.saved { color: var(--accent); border-color: var(--accent); background: #fce0eb; }
 
-    /* Auto-play toggle */
     .auto-label {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--muted); cursor: pointer;
-      padding: 8px 14px; border-radius: 999px;
-      border: 1px solid var(--border); background: var(--surface);
+      display: flex; align-items: center; gap: 7px;
+      font-size: 12px; color: var(--muted); cursor: pointer;
+      padding: 9px 14px; border-radius: 999px;
+      border: 1.5px solid var(--border); background: var(--blush);
+      transition: all .15s;
     }
+    .auto-label:hover { border-color: var(--soft); }
     .auto-label input { accent-color: var(--accent); }
 
-    /* Favorites panel */
+    /* ── Favorites panel ── */
     .fav-panel {
-      background: var(--surface); border: 1px solid var(--border);
+      background: var(--surface); border: 1.5px solid var(--border);
       border-radius: var(--r); box-shadow: var(--shadow);
-      backdrop-filter: blur(12px); padding: 24px;
-      display: none; flex-direction: column; gap: 12px;
+      padding: 24px 26px;
+      display: none; flex-direction: column; gap: 14px;
     }
     .fav-panel.open { display: flex; }
-    .fav-panel h3 {
-      font-family: 'Playfair Display', serif;
-      font-size: 18px; font-style: italic; color: var(--muted);
+    .fav-panel-header {
+      display: flex; justify-content: space-between; align-items: center;
     }
+    .fav-panel h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px; font-style: italic; color: var(--muted);
+    }
+    .fav-clear {
+      font-size: 11px; color: var(--soft); cursor: pointer; background: none; border: none;
+      font-family: 'Jost', sans-serif; letter-spacing: .3px;
+    }
+    .fav-clear:hover { color: var(--accent); }
     .fav-item {
-      font-size: 14px; line-height: 1.5; padding: 12px 14px;
-      background: #ff5c9d0a; border-radius: 12px;
-      border: 1px solid #ff5c9d22;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 15px; line-height: 1.5; font-style: italic;
+      padding: 13px 15px;
+      background: var(--blush); border-radius: 12px;
+      border: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
-      font-family: 'Playfair Display', serif; font-style: italic;
+      color: var(--ink);
     }
     .fav-remove {
-      background: none; border: none; cursor: pointer; color: var(--muted);
-      font-size: 16px; flex-shrink: 0; padding: 0 2px;
+      background: none; border: none; cursor: pointer; color: var(--soft);
+      font-size: 14px; flex-shrink: 0; padding: 1px 3px; transition: color .15s;
     }
     .fav-remove:hover { color: var(--accent); }
-    .fav-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 12px 0; }
+    .fav-empty { font-size: 13px; color: var(--soft); text-align: center; padding: 10px 0; }
 
-    /* Floating hearts */
+    /* ── Floating hearts ── */
     .hearts { pointer-events: none; position: fixed; inset: 0; z-index: 999; overflow: hidden; }
     .heart-f {
       position: absolute; bottom: -40px; left: var(--x, 50%);
       font-size: var(--s, 16px); opacity: 0;
-      animation: floatUp linear var(--d, 6s) forwards;
+      animation: floatUp ease-out var(--d, 6s) forwards;
     }
     @keyframes floatUp {
-      0%   { opacity: .7; transform: translate(-50%, 0) rotate(0deg); }
-      100% { opacity: 0;  transform: translate(-50%, -100vh) rotate(20deg); }
+      0%   { opacity: .8; transform: translate(-50%, 0) scale(1); }
+      60%  { opacity: .5; }
+      100% { opacity: 0;  transform: translate(-50%, -100vh) scale(.6) rotate(15deg); }
     }
 
-    /* Footer */
+    /* ── Footer ── */
     .footer {
       display: flex; justify-content: space-between;
-      font-size: 12px; color: var(--muted); padding: 0 4px;
+      font-size: 12px; color: var(--soft); padding: 0 2px;
+      font-weight: 300;
     }
-
-    /* Error state */
-    .error { font-size: 16px; color: var(--muted); font-style: italic; }
   </style>
 </head>
 <body>
   <div class="wrap">
 
     <div class="header">
-      <div class="logo">💌 LoveNote</div>
-      <button class="fav-count" id="favToggle">♡ 0 saved</button>
+      <div class="logo"><span>💌</span> LoveNote</div>
+      <button class="fav-pill" id="favToggle">♡ 0 saved</button>
     </div>
 
     <div class="moods" id="moods">
@@ -216,71 +246,72 @@
     </div>
 
     <div class="card">
-      <div class="quote-wrap">
-        <div class="quote-label">Your love note</div>
-        <div id="quote">Loading your love note…</div>
-      </div>
-      <div class="actions">
-        <button class="btn btn-primary" id="newBtn">New note ✨</button>
-        <button class="btn btn-ghost" id="copyBtn">Copy</button>
-        <button class="btn btn-ghost" id="shareBtn">Share</button>
-        <label class="auto-label">
-          <input type="checkbox" id="autoChk" /> Auto (5s)
-        </label>
-        <button class="btn btn-fav" id="favBtn" title="Save to favorites">♡</button>
+      <div class="card-inner">
+        <div>
+          <div class="quote-label">Your love note</div>
+        </div>
+        <div id="quote" class="visible">Loading your love note…</div>
+        <div class="actions">
+          <button class="btn btn-primary" id="newBtn">New note ✨</button>
+          <button class="btn btn-ghost" id="copyBtn">Copy</button>
+          <button class="btn btn-ghost" id="shareBtn">Share</button>
+          <label class="auto-label">
+            <input type="checkbox" id="autoChk" /> Auto (5s)
+          </label>
+          <button class="btn btn-fav" id="favBtn" title="Save">♡</button>
+        </div>
       </div>
     </div>
 
     <div class="fav-panel" id="favPanel">
-      <h3>Saved Notes</h3>
+      <div class="fav-panel-header">
+        <h3>Saved Notes</h3>
+        <button class="fav-clear" id="favClear">Clear all</button>
+      </div>
       <div id="favList"></div>
     </div>
 
     <div class="footer">
-      <span>Press <strong>N</strong> for new • <strong>C</strong> to copy</span>
+      <span>Press <strong>N</strong> for new · <strong>C</strong> to copy</span>
       <span>Made with ❤</span>
     </div>
 
   </div>
-
   <div class="hearts" id="hearts"></div>
 
   <script>
     const API_URL = "/random-quote";
-
-    const FALLBACK_QUOTES = [
+    const FALLBACK = [
       "You are the poetry I never knew how to write.",
       "In a sea of people, my eyes will always search for you.",
       "Every love story is beautiful, but ours is my favorite.",
     ];
 
-    const quoteEl  = document.getElementById("quote");
-    const newBtn   = document.getElementById("newBtn");
-    const copyBtn  = document.getElementById("copyBtn");
-    const shareBtn = document.getElementById("shareBtn");
-    const autoChk  = document.getElementById("autoChk");
-    const favBtn   = document.getElementById("favBtn");
-    const favPanel = document.getElementById("favPanel");
-    const favList  = document.getElementById("favList");
-    const favToggle= document.getElementById("favToggle");
+    const quoteEl   = document.getElementById("quote");
+    const newBtn    = document.getElementById("newBtn");
+    const copyBtn   = document.getElementById("copyBtn");
+    const shareBtn  = document.getElementById("shareBtn");
+    const autoChk   = document.getElementById("autoChk");
+    const favBtn    = document.getElementById("favBtn");
+    const favPanel  = document.getElementById("favPanel");
+    const favList   = document.getElementById("favList");
+    const favToggle = document.getElementById("favToggle");
+    const favClear  = document.getElementById("favClear");
 
     let currentQuote = "";
     let currentMood  = "all";
     let autoTimer    = null;
 
-    // ── Favorites (localStorage) ──────────────────────────────────────────
-    function getFavs() {
-      try { return JSON.parse(localStorage.getItem("lovenote_favs") || "[]"); }
-      catch { return []; }
-    }
-    function saveFavs(arr) { localStorage.setItem("lovenote_favs", JSON.stringify(arr)); }
+    // ── Favorites ─────────────────────────────────────────────────────────
+    const getFavs = () => { try { return JSON.parse(localStorage.getItem("ln_favs") || "[]"); } catch { return []; } };
+    const saveFavs = a => localStorage.setItem("ln_favs", JSON.stringify(a));
 
     function updateFavUI() {
       const favs = getFavs();
       favToggle.textContent = `♡ ${favs.length} saved`;
-      const isSaved = favs.includes(currentQuote);
-      favBtn.textContent = isSaved ? "♥" : "♡";
-      favBtn.classList.toggle("saved", isSaved);
+      const saved = favs.includes(currentQuote);
+      favBtn.textContent = saved ? "♥" : "♡";
+      favBtn.classList.toggle("saved", saved);
       renderFavList(favs);
     }
 
@@ -292,36 +323,27 @@
       favList.innerHTML = favs.map((q, i) => `
         <div class="fav-item">
           <span>"${q}"</span>
-          <button class="fav-remove" data-i="${i}" title="Remove">✕</button>
-        </div>
-      `).join("");
-      favList.querySelectorAll(".fav-remove").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const favs = getFavs();
-          favs.splice(+btn.dataset.i, 1);
-          saveFavs(favs);
-          updateFavUI();
-        });
-      });
+          <button class="fav-remove" data-i="${i}">✕</button>
+        </div>`).join("");
+      favList.querySelectorAll(".fav-remove").forEach(b =>
+        b.addEventListener("click", () => {
+          const f = getFavs(); f.splice(+b.dataset.i, 1); saveFavs(f); updateFavUI();
+        })
+      );
     }
 
     favBtn.addEventListener("click", () => {
       if (!currentQuote) return;
-      const favs = getFavs();
-      const idx = favs.indexOf(currentQuote);
-      if (idx === -1) favs.push(currentQuote);
+      const favs = getFavs(); const idx = favs.indexOf(currentQuote);
+      if (idx === -1) { favs.push(currentQuote); burstHearts(4); }
       else favs.splice(idx, 1);
-      saveFavs(favs);
-      updateFavUI();
-      if (idx === -1) burstHearts(3);
+      saveFavs(favs); updateFavUI();
     });
 
-    favToggle.addEventListener("click", () => {
-      favPanel.classList.toggle("open");
-      updateFavUI();
-    });
+    favToggle.addEventListener("click", () => { favPanel.classList.toggle("open"); updateFavUI(); });
+    favClear.addEventListener("click", () => { saveFavs([]); updateFavUI(); });
 
-    // ── Mood selector ─────────────────────────────────────────────────────
+    // ── Mood ──────────────────────────────────────────────────────────────
     document.getElementById("moods").addEventListener("click", e => {
       const btn = e.target.closest(".mood-btn");
       if (!btn) return;
@@ -332,7 +354,7 @@
     });
 
     // ── Typewriter ────────────────────────────────────────────────────────
-    async function typeText(el, text, speed = 16) {
+    async function typeText(el, text, speed = 15) {
       el.textContent = "";
       for (let i = 0; i < text.length; i++) {
         el.textContent += text[i];
@@ -340,10 +362,11 @@
       }
     }
 
-    // ── Fetch quote ───────────────────────────────────────────────────────
+    // ── Fetch ─────────────────────────────────────────────────────────────
     async function fetchQuote() {
       newBtn.disabled = true;
-      quoteEl.classList.add("loading");
+      quoteEl.classList.remove("visible"); quoteEl.classList.add("fading");
+      await new Promise(r => setTimeout(r, 250));
       try {
         const res = await fetch(`${API_URL}?mood=${currentMood}`, { cache: "no-store" });
         if (!res.ok) throw new Error("API error");
@@ -351,34 +374,32 @@
         const line = (data.quote || "").trim();
         if (!line) throw new Error("Empty");
         currentQuote = line;
-        quoteEl.classList.remove("loading");
+        quoteEl.classList.remove("fading"); quoteEl.classList.add("visible");
         await typeText(quoteEl, `"${line}"`);
         burstHearts(6);
-      } catch (e) {
-        // Fallback quote — never leaves user stuck
-        const fallback = FALLBACK_QUOTES[Math.floor(Math.random() * FALLBACK_QUOTES.length)];
+      } catch {
+        const fallback = FALLBACK[Math.floor(Math.random() * FALLBACK.length)];
         currentQuote = fallback;
-        quoteEl.classList.remove("loading");
+        quoteEl.classList.remove("fading"); quoteEl.classList.add("visible");
         await typeText(quoteEl, `"${fallback}"`);
-        console.warn("API unavailable, using fallback:", e.message);
       } finally {
         newBtn.disabled = false;
         updateFavUI();
       }
     }
 
-    // ── Floating hearts ───────────────────────────────────────────────────
-    function burstHearts(count = 6) {
+    // ── Hearts ────────────────────────────────────────────────────────────
+    function burstHearts(n = 6) {
       const box = document.getElementById("hearts");
-      for (let i = 0; i < count; i++) {
-        const span = document.createElement("span");
-        span.className = "heart-f";
-        span.textContent = ["💖","💗","💝","💕"][Math.floor(Math.random()*4)];
-        span.style.setProperty("--x", `${10 + Math.random() * 80}%`);
-        span.style.setProperty("--s", `${14 + Math.random() * 20}px`);
-        span.style.setProperty("--d", `${4 + Math.random() * 4}s`);
-        box.appendChild(span);
-        setTimeout(() => span.remove(), 8000);
+      for (let i = 0; i < n; i++) {
+        const s = document.createElement("span");
+        s.className = "heart-f";
+        s.textContent = ["💖","💗","🌸","💕","🩷"][Math.floor(Math.random()*5)];
+        s.style.setProperty("--x", `${10 + Math.random()*80}%`);
+        s.style.setProperty("--s", `${13 + Math.random()*18}px`);
+        s.style.setProperty("--d", `${4 + Math.random()*4}s`);
+        box.appendChild(s);
+        setTimeout(() => s.remove(), 8000);
       }
     }
 
@@ -397,7 +418,7 @@
       }
     });
 
-    // ── Keyboard shortcuts ────────────────────────────────────────────────
+    // ── Keyboard ──────────────────────────────────────────────────────────
     document.addEventListener("keydown", e => {
       if (e.key.toLowerCase() === "n") fetchQuote();
       if (e.key.toLowerCase() === "c") copyBtn.click();
@@ -405,21 +426,15 @@
 
     // ── Autoplay ──────────────────────────────────────────────────────────
     autoChk.addEventListener("change", () => {
-      if (autoChk.checked) {
-        fetchQuote();
-        autoTimer = setInterval(fetchQuote, 5000);
-      } else {
-        clearInterval(autoTimer);
-      }
+      if (autoChk.checked) { fetchQuote(); autoTimer = setInterval(fetchQuote, 5000); }
+      else clearInterval(autoTimer);
     });
-
     document.addEventListener("visibilitychange", () => {
       if (!autoChk.checked) return;
       if (document.hidden) clearInterval(autoTimer);
       else autoTimer = setInterval(fetchQuote, 5000);
     });
 
-    // ── Init ──────────────────────────────────────────────────────────────
     fetchQuote();
     updateFavUI();
   </script>
