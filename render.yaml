@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: random-quotes-api
+    name: lovenote-api
     env: python
     plan: free
     buildCommand: pip install -r requirements.txt

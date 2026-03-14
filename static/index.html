@@ -3,212 +3,425 @@
 <head>
   <meta charset="utf-8" />
   <title>LoveNote 💌</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="color-scheme" content="light dark" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    :root{
-      --bg1:#fff0f5;    /* lavenderblush */
-      --bg2:#ffe3ed;    /* soft pink */
-      --ink:#7a1b4a;    /* romantic plum */
-      --ink-muted:#a5426b;
-      --accent:#ff6fa9; /* rose */
-      --accent-2:#ffd1dc;/* baby pink */
-      --card:#ffffffcc; /* translucent white */
-      --shadow: 0 10px 30px rgba(0,0,0,.12);
-      --radius: 22px;
+    :root {
+      --bg:      #fff0f5;
+      --surface: #ffffffcc;
+      --border:  #ffffff55;
+      --ink:     #6b1040;
+      --muted:   #a5426b;
+      --accent:  #ff5c9d;
+      --accent2: #ffd1dc;
+      --shadow:  0 20px 60px rgba(180,40,100,.15);
+      --r: 24px;
     }
-    @media (prefers-color-scheme: dark){
-      :root{
-        --bg1:#2a0f1e; --bg2:#4a1633; --ink:#ffd1dc; --ink-muted:#ffc0cb; --card:#00000066; --shadow: 0 10px 30px rgba(0,0,0,.5);
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #1a0812;
+        --surface: #2e0d20cc;
+        --border: #ffffff18;
+        --ink: #ffd1dc;
+        --muted: #e8a0b8;
+        --shadow: 0 20px 60px rgba(0,0,0,.5);
       }
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0; min-height:100svh; display:grid; place-items:center;
-      background: radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 60%),
-                  radial-gradient(1200px 800px at 80% 90%, var(--bg1), transparent 60%),
-                  linear-gradient(135deg, var(--bg1), var(--bg2));
-      font-family: ui-serif, Georgia, "Times New Roman", Times, serif;
-      color:var(--ink);
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(ellipse 900px 600px at 10% 0%, #ffd1dc88, transparent 60%),
+        radial-gradient(ellipse 700px 500px at 90% 100%, #ffb3cc66, transparent 60%),
+        var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--ink);
     }
-    .wrap{
-      position:relative; padding:28px;
-      width:min(820px, 92vw);
+
+    .wrap { width: min(680px, 100%); display: flex; flex-direction: column; gap: 12px; }
+
+    /* Header */
+    .header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 4px;
     }
-    .card{
-      background:var(--card); backdrop-filter: blur(8px);
-      border:1px solid #ffffff40; border-radius:var(--radius); box-shadow:var(--shadow);
-      padding:28px 26px 22px; position:relative; overflow:hidden;
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; font-style: italic;
+      color: var(--accent); letter-spacing: -.3px;
     }
-    .heading{
-      display:flex; align-items:center; gap:10px; margin-bottom:12px; color:var(--ink-muted);
-      font-size:15px; letter-spacing:.3px; text-transform:uppercase;
+    .fav-count {
+      font-size: 13px; color: var(--muted);
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 5px 12px; border-radius: 999px; cursor: pointer;
+      transition: background .2s;
     }
-    .heading .heart{font-size:18px}
-    .quote{
-      font-size: clamp(24px, 3.2vw, 36px);
-      line-height:1.25; margin:10px 0 18px; font-weight:600;
+    .fav-count:hover { background: var(--accent2); color: var(--ink); }
+
+    /* Mood pills */
+    .moods {
+      display: flex; gap: 8px; flex-wrap: wrap;
     }
-    .controls{
-      display:flex; flex-wrap:wrap; gap:10px; align-items:center;
+    .mood-btn {
+      padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all .2s; backdrop-filter: blur(6px);
     }
-    button{
-      appearance:none; border:0; border-radius: 999px; padding:10px 16px; cursor:pointer;
-      background:linear-gradient(180deg, var(--accent), #ff5c9d);
-      color:white; font-weight:700; box-shadow:0 6px 20px rgba(255, 105, 155, .45);
-      transition: transform .05s ease, filter .2s ease;
+    .mood-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .mood-btn.active {
+      background: var(--accent); color: white; border-color: var(--accent);
+      box-shadow: 0 4px 16px rgba(255,92,157,.4);
     }
-    button:active{ transform: translateY(1px) scale(.99); }
-    .ghost{
-      background:transparent; color:var(--ink); border:1px solid #00000015; box-shadow:none;
+
+    /* Main card */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      padding: 40px 36px 32px;
+      position: relative; overflow: hidden;
+      min-height: 200px;
+      display: flex; flex-direction: column; gap: 28px;
     }
-    .ghost:hover{ background:#ffffff40 }
-    .muted{ opacity:.85 }
-    .tiny{ font-size:12px; margin-left:auto; }
-    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .pill{
-      background: #ffffff88; border:1px solid #ffffff55; padding:6px 10px; border-radius:999px;
-      display:flex; gap:8px; align-items:center; color:var(--ink-muted); font-size:13px;
+    .card::before {
+      content: '💌';
+      position: absolute; top: -20px; right: -10px;
+      font-size: 120px; opacity: .06; pointer-events: none;
+      transform: rotate(-15deg);
     }
-    /* floating hearts */
-    .hearts{ pointer-events:none; position:absolute; inset:0; overflow:hidden; z-index:0; }
-    .heart-f{
-      position:absolute; bottom:-40px; left:var(--x, 50%); font-size:var(--s, 16px); opacity:.55;
-      animation: floatUp linear var(--d, 6s) infinite;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,.15));
+
+    /* Quote */
+    .quote-wrap { position: relative; z-index: 1; }
+    .quote-label {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 14px; font-weight: 500;
     }
-    @keyframes floatUp{
-      from{ transform: translate(-50%, 0) }
-      to{ transform: translate(-50%, -120vh) }
+    #quote {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(22px, 3.5vw, 34px);
+      line-height: 1.3; font-weight: 500; font-style: italic;
+      min-height: 80px;
+      transition: opacity .3s ease;
     }
-    .content{ position:relative; z-index:1; }
-    .footer{
-      margin-top:10px; display:flex; justify-content:space-between; align-items:center; color:var(--ink-muted); font-size:13px;
+    #quote.loading { opacity: .4; }
+
+    /* Actions */
+    .actions {
+      display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+      position: relative; z-index: 1;
     }
-    a{ color:inherit }
+    .btn {
+      padding: 11px 20px; border-radius: 999px; border: none;
+      font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: all .15s; display: flex; align-items: center; gap: 6px;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #ff5c9d, #ff3385);
+      color: white;
+      box-shadow: 0 6px 24px rgba(255,92,157,.45);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(255,92,157,.5); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-ghost {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--muted); backdrop-filter: blur(6px);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: #ff5c9d11; }
+    .btn-fav {
+      margin-left: auto;
+      background: transparent; border: 1px solid var(--border);
+      color: var(--muted); font-size: 18px; padding: 8px 14px;
+    }
+    .btn-fav:hover { border-color: #ff5c9d; background: #ff5c9d11; }
+    .btn-fav.saved { color: #ff5c9d; border-color: #ff5c9d; }
+
+    /* Auto-play toggle */
+    .auto-label {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: var(--muted); cursor: pointer;
+      padding: 8px 14px; border-radius: 999px;
+      border: 1px solid var(--border); background: var(--surface);
+    }
+    .auto-label input { accent-color: var(--accent); }
+
+    /* Favorites panel */
+    .fav-panel {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r); box-shadow: var(--shadow);
+      backdrop-filter: blur(12px); padding: 24px;
+      display: none; flex-direction: column; gap: 12px;
+    }
+    .fav-panel.open { display: flex; }
+    .fav-panel h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px; font-style: italic; color: var(--muted);
+    }
+    .fav-item {
+      font-size: 14px; line-height: 1.5; padding: 12px 14px;
+      background: #ff5c9d0a; border-radius: 12px;
+      border: 1px solid #ff5c9d22;
+      display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;
+      font-family: 'Playfair Display', serif; font-style: italic;
+    }
+    .fav-remove {
+      background: none; border: none; cursor: pointer; color: var(--muted);
+      font-size: 16px; flex-shrink: 0; padding: 0 2px;
+    }
+    .fav-remove:hover { color: var(--accent); }
+    .fav-empty { font-size: 13px; color: var(--muted); text-align: center; padding: 12px 0; }
+
+    /* Floating hearts */
+    .hearts { pointer-events: none; position: fixed; inset: 0; z-index: 999; overflow: hidden; }
+    .heart-f {
+      position: absolute; bottom: -40px; left: var(--x, 50%);
+      font-size: var(--s, 16px); opacity: 0;
+      animation: floatUp linear var(--d, 6s) forwards;
+    }
+    @keyframes floatUp {
+      0%   { opacity: .7; transform: translate(-50%, 0) rotate(0deg); }
+      100% { opacity: 0;  transform: translate(-50%, -100vh) rotate(20deg); }
+    }
+
+    /* Footer */
+    .footer {
+      display: flex; justify-content: space-between;
+      font-size: 12px; color: var(--muted); padding: 0 4px;
+    }
+
+    /* Error state */
+    .error { font-size: 16px; color: var(--muted); font-style: italic; }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <div class="hearts" id="hearts"></div>
-      <div class="content">
-        <div class="heading"><span class="heart">💌</span> LoveNote</div>
-        <div id="quote" class="quote">Loading your love note…</div>
 
-        <div class="controls">
-          <div class="row">
-            <button id="newBtn">New note ✨</button>
-            <button id="copyBtn" class="ghost">Copy</button>
-            <button id="shareBtn" class="ghost">Share</button>
-            <label class="pill">
-              <input id="autoChk" type="checkbox" style="accent-color:#ff6fa9" />
-              Auto-play
-              <span class="muted" id="intervalLabel">(every 5s)</span>
-            </label>
-          </div>
-          <span class="tiny muted">Powered by <a href="#" id="apiLink">your API</a></span>
-        </div>
+    <div class="header">
+      <div class="logo">💌 LoveNote</div>
+      <button class="fav-count" id="favToggle">♡ 0 saved</button>
+    </div>
+
+    <div class="moods" id="moods">
+      <button class="mood-btn active" data-mood="all">✨ All</button>
+      <button class="mood-btn" data-mood="flirty">😏 Flirty</button>
+      <button class="mood-btn" data-mood="sweet">🍯 Sweet</button>
+      <button class="mood-btn" data-mood="poetic">🌙 Poetic</button>
+    </div>
+
+    <div class="card">
+      <div class="quote-wrap">
+        <div class="quote-label">Your love note</div>
+        <div id="quote">Loading your love note…</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-primary" id="newBtn">New note ✨</button>
+        <button class="btn btn-ghost" id="copyBtn">Copy</button>
+        <button class="btn btn-ghost" id="shareBtn">Share</button>
+        <label class="auto-label">
+          <input type="checkbox" id="autoChk" /> Auto (5s)
+        </label>
+        <button class="btn btn-fav" id="favBtn" title="Save to favorites">♡</button>
       </div>
     </div>
+
+    <div class="fav-panel" id="favPanel">
+      <h3>Saved Notes</h3>
+      <div id="favList"></div>
+    </div>
+
     <div class="footer">
-      <span>Tip: press <strong>N</strong> for a new note • <strong>C</strong> to copy</span>
+      <span>Press <strong>N</strong> for new • <strong>C</strong> to copy</span>
       <span>Made with ❤</span>
     </div>
+
   </div>
 
+  <div class="hearts" id="hearts"></div>
+
   <script>
-    // >>>> 1) SET YOUR API URL HERE <<<<
-    const API_URL = "https://random-quotes-api-sgd0.onrender.com/random-quote"; // <- change if needed
+    const API_URL = "/random-quote";
 
-    // Cache elements
-    const quoteEl = document.getElementById("quote");
-    const newBtn  = document.getElementById("newBtn");
-    const copyBtn = document.getElementById("copyBtn");
-    const shareBtn= document.getElementById("shareBtn");
-    const autoChk = document.getElementById("autoChk");
-    const apiLink = document.getElementById("apiLink");
-    apiLink.href = API_URL;
+    const FALLBACK_QUOTES = [
+      "You are the poetry I never knew how to write.",
+      "In a sea of people, my eyes will always search for you.",
+      "Every love story is beautiful, but ours is my favorite.",
+    ];
 
-    // Typewriter effect for extra ✨
-    async function typeText(el, text, speed=18){
+    const quoteEl  = document.getElementById("quote");
+    const newBtn   = document.getElementById("newBtn");
+    const copyBtn  = document.getElementById("copyBtn");
+    const shareBtn = document.getElementById("shareBtn");
+    const autoChk  = document.getElementById("autoChk");
+    const favBtn   = document.getElementById("favBtn");
+    const favPanel = document.getElementById("favPanel");
+    const favList  = document.getElementById("favList");
+    const favToggle= document.getElementById("favToggle");
+
+    let currentQuote = "";
+    let currentMood  = "all";
+    let autoTimer    = null;
+
+    // ── Favorites (localStorage) ──────────────────────────────────────────
+    function getFavs() {
+      try { return JSON.parse(localStorage.getItem("lovenote_favs") || "[]"); }
+      catch { return []; }
+    }
+    function saveFavs(arr) { localStorage.setItem("lovenote_favs", JSON.stringify(arr)); }
+
+    function updateFavUI() {
+      const favs = getFavs();
+      favToggle.textContent = `♡ ${favs.length} saved`;
+      const isSaved = favs.includes(currentQuote);
+      favBtn.textContent = isSaved ? "♥" : "♡";
+      favBtn.classList.toggle("saved", isSaved);
+      renderFavList(favs);
+    }
+
+    function renderFavList(favs) {
+      if (!favs.length) {
+        favList.innerHTML = `<div class="fav-empty">No saved notes yet — hit ♡ to save one!</div>`;
+        return;
+      }
+      favList.innerHTML = favs.map((q, i) => `
+        <div class="fav-item">
+          <span>"${q}"</span>
+          <button class="fav-remove" data-i="${i}" title="Remove">✕</button>
+        </div>
+      `).join("");
+      favList.querySelectorAll(".fav-remove").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const favs = getFavs();
+          favs.splice(+btn.dataset.i, 1);
+          saveFavs(favs);
+          updateFavUI();
+        });
+      });
+    }
+
+    favBtn.addEventListener("click", () => {
+      if (!currentQuote) return;
+      const favs = getFavs();
+      const idx = favs.indexOf(currentQuote);
+      if (idx === -1) favs.push(currentQuote);
+      else favs.splice(idx, 1);
+      saveFavs(favs);
+      updateFavUI();
+      if (idx === -1) burstHearts(3);
+    });
+
+    favToggle.addEventListener("click", () => {
+      favPanel.classList.toggle("open");
+      updateFavUI();
+    });
+
+    // ── Mood selector ─────────────────────────────────────────────────────
+    document.getElementById("moods").addEventListener("click", e => {
+      const btn = e.target.closest(".mood-btn");
+      if (!btn) return;
+      document.querySelectorAll(".mood-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentMood = btn.dataset.mood;
+      fetchQuote();
+    });
+
+    // ── Typewriter ────────────────────────────────────────────────────────
+    async function typeText(el, text, speed = 16) {
       el.textContent = "";
-      for (let i = 0; i < text.length; i++){
+      for (let i = 0; i < text.length; i++) {
         el.textContent += text[i];
         await new Promise(r => setTimeout(r, speed));
       }
     }
 
-    async function fetchQuote(){
+    // ── Fetch quote ───────────────────────────────────────────────────────
+    async function fetchQuote() {
       newBtn.disabled = true;
-      try{
-        const res = await fetch(API_URL, {cache:"no-store"});
+      quoteEl.classList.add("loading");
+      try {
+        const res = await fetch(`${API_URL}?mood=${currentMood}`, { cache: "no-store" });
+        if (!res.ok) throw new Error("API error");
         const data = await res.json();
         const line = (data.quote || "").trim();
-        if(!line) throw new Error("Empty quote");
-        await typeText(quoteEl, `“${line}”`);
-        burstHearts();
-      }catch(e){
-        quoteEl.textContent = "Couldn’t load a love note. Try again in a moment 💔";
-        console.error(e);
-      }finally{
+        if (!line) throw new Error("Empty");
+        currentQuote = line;
+        quoteEl.classList.remove("loading");
+        await typeText(quoteEl, `"${line}"`);
+        burstHearts(6);
+      } catch (e) {
+        // Fallback quote — never leaves user stuck
+        const fallback = FALLBACK_QUOTES[Math.floor(Math.random() * FALLBACK_QUOTES.length)];
+        currentQuote = fallback;
+        quoteEl.classList.remove("loading");
+        await typeText(quoteEl, `"${fallback}"`);
+        console.warn("API unavailable, using fallback:", e.message);
+      } finally {
         newBtn.disabled = false;
+        updateFavUI();
       }
     }
 
-    // Floating hearts generator
-    function burstHearts(){
+    // ── Floating hearts ───────────────────────────────────────────────────
+    function burstHearts(count = 6) {
       const box = document.getElementById("hearts");
-      for(let i=0;i<6;i++){
+      for (let i = 0; i < count; i++) {
         const span = document.createElement("span");
         span.className = "heart-f";
-        span.textContent = Math.random() < .5 ? "💖" : "💗";
-        span.style.setProperty("--x", `${10 + Math.random()*80}%`);
-        span.style.setProperty("--s", `${14 + Math.random()*18}px`);
-        span.style.setProperty("--d", `${5 + Math.random()*4}s`);
+        span.textContent = ["💖","💗","💝","💕"][Math.floor(Math.random()*4)];
+        span.style.setProperty("--x", `${10 + Math.random() * 80}%`);
+        span.style.setProperty("--s", `${14 + Math.random() * 20}px`);
+        span.style.setProperty("--d", `${4 + Math.random() * 4}s`);
         box.appendChild(span);
-        setTimeout(()=> span.remove(), 9000);
+        setTimeout(() => span.remove(), 8000);
       }
     }
 
-    // Copy & Share
-    copyBtn.addEventListener("click", async ()=>{
-      const text = quoteEl.textContent.replace(/^“|”$/g,"");
-      await navigator.clipboard.writeText(text);
+    // ── Copy & Share ──────────────────────────────────────────────────────
+    copyBtn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(currentQuote);
       copyBtn.textContent = "Copied ✓";
-      setTimeout(()=> copyBtn.textContent = "Copy", 1300);
+      setTimeout(() => copyBtn.textContent = "Copy", 1400);
     });
 
-    shareBtn.addEventListener("click", async ()=>{
-      const text = quoteEl.textContent.replace(/^“|”$/g,"");
-      if (navigator.share){
-        try{ await navigator.share({ text, title:"LoveNote 💌", url: location.href }); }catch{}
+    shareBtn.addEventListener("click", async () => {
+      if (navigator.share) {
+        try { await navigator.share({ text: currentQuote, title: "LoveNote 💌", url: location.href }); } catch {}
       } else {
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}%20%23LoveNote`;
-        window.open(url, "_blank");
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(currentQuote + " 💌 #LoveNote")}`, "_blank");
       }
     });
 
-    // Buttons & keyboard
-    newBtn.addEventListener("click", fetchQuote);
-    document.addEventListener("keydown", (e)=>{
+    // ── Keyboard shortcuts ────────────────────────────────────────────────
+    document.addEventListener("keydown", e => {
       if (e.key.toLowerCase() === "n") fetchQuote();
       if (e.key.toLowerCase() === "c") copyBtn.click();
     });
 
-    // Autoplay
-    let timer = null;
-    autoChk.addEventListener("change", ()=>{
-      if (autoChk.checked){
+    // ── Autoplay ──────────────────────────────────────────────────────────
+    autoChk.addEventListener("change", () => {
+      if (autoChk.checked) {
         fetchQuote();
-        timer = setInterval(fetchQuote, 5000);
+        autoTimer = setInterval(fetchQuote, 5000);
       } else {
-        clearInterval(timer);
+        clearInterval(autoTimer);
       }
     });
 
-    // Load first quote
+    document.addEventListener("visibilitychange", () => {
+      if (!autoChk.checked) return;
+      if (document.hidden) clearInterval(autoTimer);
+      else autoTimer = setInterval(fetchQuote, 5000);
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────
     fetchQuote();
+    updateFavUI();
   </script>
 </body>
 </html>
